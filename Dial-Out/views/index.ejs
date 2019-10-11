@@ -15,6 +15,15 @@
           .then((sipData) => {
             connectionId = sipData.connectionId;
             phoneNumberElement.value = '';
+            const data = {
+              connectionId,
+              apiKey,
+              token,
+              sessionId,
+              streamId : sipData.streamId
+            };
+            console.log('Session info ', JSON.stringify(data));
+            addSessionInfo(data);
           }).catch((error) => {
               alert(`There was an error dialing-out`);
           })
@@ -29,14 +38,34 @@
           })
         };
       </script>
-      <script src="https://static.opentok.com/v2/js/opentok.min.js"></script>            
+      <script src="https://static.opentok.com/v2.10/js/opentok.min.js"></script>
       <script src="/js/opentok.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <script type="text/javascript">
+        var apiUrl = '<%= apiUrl %>';
+        if (apiUrl || apiUrl !== '') {
+          console.log('Using apiUrl ', apiUrl);
+          OT.properties.apiURL = OT.properties.apiURLSSL = apiUrl;
+        }
+      </script>
+      <script type = "text/javascript">
+        const addSessionInfo = (data) => {
+          $('<p> Dialed number : '+ phoneNumber + '</p>').appendTo('#sessionInfo');
+          $('<p> API Key : '+ data.apiKey + '</p>').appendTo('#sessionInfo');
+          $('<p> Token : '+ data.token + '</p>').appendTo('#sessionInfo');
+          $('<p> SessionId : '+ sessionId + '</p>').appendTo('#sessionInfo');
+          $('<p> ConnectionId : '+ data.connectionId + '</p>').appendTo('#sessionInfo');
+          $('<p> StreamId : '+ data.streamId + '</p>').appendTo('#sessionInfo');
+        }
+      </script>
+
   </head>
   <body>
       <div id="publisher"></div>
       <div id="subscribers"></div>
       <input type="text" id="phoneNumber">
       <button onclick="dialOut()">Click here to dial-out</button>
-      <button onclick="hangUp()">Click here to hang-up</button>        
+      <button onclick="hangUp()">Click here to hang-up</button>
+      <div id="sessionInfo"></div>
   </body>
 </html>

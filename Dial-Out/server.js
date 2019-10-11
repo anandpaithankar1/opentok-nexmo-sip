@@ -6,7 +6,21 @@ const app = express();
 
 app.use(express.static(`${__dirname}/public`));
 
-const OT = new OpenTok(config.apiKey, config.apiSecret);
+let OT;
+const environment = config.environement;
+const apiKey = config[environment].apiKey;
+const apiSecret = config[environment].apiSecret;
+const apiUrl = config[environment].apiUrl || undefined;
+const sipUsername = config[environment].sip.username;
+const sipPassword = config[environment].sip.password;
+
+console.log('Environment : ', environment);
+
+if (apiUrl) {
+  OT = new OpenTok(apiKey, apiSecret, apiUrl);
+} else {
+  OT = new OpenTok(apiKey, apiSecret);
+}
 
 /**
    * generateToken is used to create a token for a user
@@ -29,10 +43,11 @@ const generateToken = (sessionId, sipTokenData = '') => OT.generateToken(session
 
 const renderRoom = (res, sessionId, token, roomId) => {
   res.render('index.ejs', {
-    apiKey: config.apiKey,
+    apiKey: apiKey,
     sessionId,
     token,
     roomId,
+    apiUrl
   });
 };
 
@@ -60,8 +75,8 @@ const setSessionDataAndRenderRoom = (res, roomId) => {
 
 const setSipOptions = () => ({
   auth: {
-    username: config.sip.username,
-    password: config.sip.password,
+    username: sipUsername,
+    password: sipPassword,
   },
   secure: false,
 });
@@ -83,7 +98,7 @@ app.get('/room/:rid', (req, res) => {
 });
 
 /**
-   * When the dial-out get request is made, the dial method of the OpenTok Dial API is invoked
+  * When the dial-out get request is made, the dial method of the OpenTok Dial API is invoked
 */
 
 app.get('/dial-out', (req, res) => {
