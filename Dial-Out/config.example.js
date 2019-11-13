@@ -1,8 +1,11 @@
 module.exports = {
-    apiKey: '',
-    apiSecret: '',
-    sip: {
-        username: '',
-        password: '',
+    environment: 'local',
+    local : {
+    	apiKey: '',
+	apiSecret: '',
+	sip: {
+       	   username: '',
+           password: '',
+        }
     },
 };

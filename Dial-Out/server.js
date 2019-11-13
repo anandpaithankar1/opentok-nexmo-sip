@@ -7,7 +7,7 @@ const app = express();
 app.use(express.static(`${__dirname}/public`));
 
 let OT;
-const environment = config.environement;
+const environment = config.environment;
 const apiKey = config[environment].apiKey;
 const apiSecret = config[environment].apiSecret;
 const apiUrl = config[environment].apiUrl || undefined;

@@ -3,6 +3,7 @@ const publisher = OT.initPublisher('publisher');
 
 session.on({
   streamCreated: (event) => {
+    console.log('StreamCreated Event received, start subscription');
     const subscriberClassName = `subscriber-${event.stream.streamId}`;
     const subscriber = document.createElement('div');
     subscriber.setAttribute('id', subscriberClassName);
@@ -14,9 +15,14 @@ session.on({
   },
   sessionConnected: event => {
     console.log('session connected', event);
-    session.publish(publisher);
-  }
-});
+    session.publish(publisher, function(err) {
+	    if (err) {
+		    console.error('Error occurred during publish ', err);
+	    } else {
+		    console.log('Successfully published.');
+	    }
+    });
+}});
 
 session.connect(token, (error) => {
   if (error) {
